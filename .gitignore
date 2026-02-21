@@ -1,0 +1,115 @@
+# ----------------------------------------------------------------------
+# Root / IDE / OS Files
+# ----------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+.agents
+
+# IDE & Editor
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+.vs/
+.history/
+
+# ----------------------------------------------------------------------
+# Environment Variables & Secrets
+# ----------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+secrets.yaml
+# We ignore secrets.yaml except if there's a template version.
+# Note: Keep secrets.yaml out of version control if it maps real ENV names to templates, 
+# although typically it's ok if it doesn't contain the *values* themselves.
+# If you prefer to commit it, uncomment the line below:
+# !secrets.yaml
+
+# ----------------------------------------------------------------------
+# Frontend (Next.js / Node.js)
+# ----------------------------------------------------------------------
+# dependencies
+/frontend/node_modules
+/cre-workflow/node_modules
+node_modules/
+
+# Next.js build output
+/frontend/.next
+/frontend/out
+/frontend/build
+
+# Vercel / Deployment
+.vercel
+*.pem
+
+# logging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Lockfiles (Optional: typical to KEEP lockfiles in repo for reproducible builds, 
+# but if you really want to ignore them, uncomment below)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Next.js / TypeScript / Turbopack
+/frontend/.tsbuildinfo
+/frontend/next-env.d.ts
+*.tsbuildinfo
+
+# ----------------------------------------------------------------------
+# CRE Workflow (Node.js / TS)
+# ----------------------------------------------------------------------
+/cre-workflow/dist/
+/cre-workflow/build/
+/cre-workflow/.tsbuildinfo
+
+# ----------------------------------------------------------------------
+# Smart Contracts (Foundry)
+# ----------------------------------------------------------------------
+# Compiler output
+/contracts/out/
+/contracts/cache/
+/contracts/artifacts/
+
+# Build artifacts
+/contracts/broadcast/
+/contracts/reports/
+
+# Foundry dependencies
+/contracts/lib/
+# (If you don't use git submodules for forge libs, keep the above uncommented.
+# If you DO use git submodules for forge libs, it's customary to commit them, so comment out /contracts/lib/)
+
+# Optional locally generated files
+/contracts/.gas-snapshot
+
+# ----------------------------------------------------------------------
+# Miscellaneous
+# ----------------------------------------------------------------------
+*.log
+coverage/
+.nyc_output/
+*.pid
+*.seed
+*.pid.lock
