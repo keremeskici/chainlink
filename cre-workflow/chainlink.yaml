@@ -1,0 +1,15 @@
+# SwarmOracle Protocol — CRE Workflow Definition
+# Simulate with: cre workflow simulate
+# Deploy with:   cre workflow deploy (once Confidential HTTP exits experimental)
+
+name: swarm-oracle-protocol
+owner: ""
+
+# TypeScript entry point
+codeLocation: ./src/main.ts
+
+# Runtime config injected as runtime.config
+configLocation: ./config.json
+
+# Vault DON secrets mapping
+secrets-path: ./secrets.yaml
