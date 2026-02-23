@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { fetchHistoricalMarkets, getActiveModels, Market } from '@/app/actions/polymarket';
 import { MarketAnalysis } from '@/components/MarketAnalysis';
 import { TerminalGrid, ModelParams } from '@/components/TerminalGrid';
+import { CyberText } from '@/components/CyberText';
 
 type ViewState = 'LIST' | 'ANALYSIS' | 'CONSENSUS' | 'COMPLETE';
 
@@ -60,9 +61,9 @@ export default function MarketsPage() {
     if (loading) {
         return (
             <div className="p-6 flex items-center justify-center min-h-[50vh]">
-                <div className="text-white font-mono animate-pulse tracking-widest uppercase">
+                <CyberText as="div" className="text-white font-mono tracking-widest uppercase">
                     &gt; Loading Historical Markets...
-                </div>
+                </CyberText>
             </div>
         );
     }
@@ -70,14 +71,14 @@ export default function MarketsPage() {
     return (
         <div className="w-full">
             {viewState === 'LIST' && (
-                <div className="p-6 max-w-4xl mx-auto animate-in fade-in duration-500">
-                    <h1 className="text-2xl font-bold mb-8 tracking-widest uppercase text-white border-b border-gray-800 pb-4">
-                        Simulation Targets ({markets.length})
-                    </h1>
+                <div className="p-6 max-w-4xl mx-auto">
+                    <CyberText as="h1" className="text-2xl font-bold mb-8 tracking-widest uppercase text-white border-b border-gray-800 pb-4">
+                        {`Simulation Targets (${markets.length})`}
+                    </CyberText>
 
                     {markets.length === 0 ? (
                         <div className="text-gray-500 font-mono tracking-widest border border-gray-800 p-8 text-center">
-                            No historical markets returned or API Error.
+                            <CyberText>No historical markets returned or API Error.</CyberText>
                         </div>
                     ) : (
                         markets.map((market) => {
@@ -87,36 +88,36 @@ export default function MarketsPage() {
                                     key={market.id}
                                     onClick={() => handleSelectMarket(market)}
                                     className={`group border p-6 mb-6 transition-all cursor-pointer bg-black ${resolved
-                                            ? 'border-green hover:border-green/80 hover:bg-[#050505]'
-                                            : 'border-white hover:border-green hover:bg-[#050505]'
+                                        ? 'border-green hover:border-green/80 hover:bg-[#050505]'
+                                        : 'border-white hover:border-green hover:bg-[#050505]'
                                         }`}
                                 >
                                     <div className="flex items-start justify-between gap-4">
-                                        <h2 className={`text-xl mb-4 transition-colors leading-relaxed ${resolved
-                                                ? 'text-green'
-                                                : 'text-white group-hover:text-green'
+                                        <CyberText as="h2" className={`text-xl mb-4 transition-colors leading-relaxed ${resolved
+                                            ? 'text-green'
+                                            : 'text-white group-hover:text-green'
                                             }`}>
                                             {market.question}
-                                        </h2>
+                                        </CyberText>
                                         {resolved && (
                                             <span className="shrink-0 border border-green text-green px-3 py-1 text-xs font-bold uppercase tracking-widest">
-                                                Resolved
+                                                <CyberText>Resolved</CyberText>
                                             </span>
                                         )}
                                     </div>
 
                                     <div className="flex justify-between font-mono text-sm text-gray-400 border-t border-gray-800 pt-4 mt-4">
-                                        <span className="truncate mr-4">ID: {market.id}</span>
+                                        <span className="truncate mr-4"><CyberText>{`ID: ${market.id}`}</CyberText></span>
                                         <span className="shrink-0 flex items-center gap-4">
                                             {resolved && (
                                                 <span className="text-green flex items-center gap-2">
                                                     <span className="w-2 h-2 bg-green" />
-                                                    {resolved}
+                                                    <CyberText>{resolved}</CyberText>
                                                 </span>
                                             )}
                                             <span className="flex items-center gap-2">
                                                 <span className={`w-2 h-2 ${resolved ? 'bg-green' : 'bg-white'}`} />
-                                                Vol: {market.volume}
+                                                <CyberText>{`Vol: ${market.volume}`}</CyberText>
                                             </span>
                                         </span>
                                     </div>
@@ -145,32 +146,32 @@ export default function MarketsPage() {
             )}
 
             {viewState === 'COMPLETE' && (
-                <div className="p-6 flex flex-col items-center justify-center min-h-[50vh] animate-in zoom-in duration-500">
+                <div className="p-6 flex flex-col items-center justify-center min-h-[50vh]">
                     <div className="border border-green p-12 text-center bg-black max-w-2xl w-full">
-                        <div className="text-gray-500 font-mono tracking-[0.3em] uppercase text-xs mb-4">
+                        <CyberText as="div" className="text-gray-500 font-mono tracking-[0.3em] uppercase text-xs mb-4">
                             SwarmOracle Protocol
-                        </div>
-                        <h2 className="text-3xl font-bold tracking-widest uppercase text-green mb-4">
+                        </CyberText>
+                        <CyberText as="h2" delay={300} className="text-3xl font-bold tracking-widest uppercase text-green mb-4">
                             Consensus Complete
-                        </h2>
+                        </CyberText>
 
                         {lastWinner && (
                             <div className="border-2 border-green px-8 py-4 mb-6 inline-block">
-                                <span className="text-green text-2xl font-bold tracking-wider">
+                                <CyberText delay={600} className="text-green text-2xl font-bold tracking-wider">
                                     {lastWinner}
-                                </span>
+                                </CyberText>
                             </div>
                         )}
 
-                        <p className="font-mono text-gray-400 mb-8 text-sm">
+                        <CyberText as="p" delay={900} className="font-mono text-gray-400 mb-8 text-sm">
                             Verdict recorded on UMA Network via OracleRegistry.recordVerdict()
-                        </p>
+                        </CyberText>
 
                         <button
                             onClick={handleBackToList}
                             className="px-8 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-green hover:text-black transition-colors"
                         >
-                            Return to Markets
+                            <CyberText delay={1200}>Return to Markets</CyberText>
                         </button>
                     </div>
                 </div>

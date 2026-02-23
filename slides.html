@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOP — Hackathon Demo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;600;700;900&display=swap');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            border-radius: 0 !important;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --green: #22c55e;
+            --red: #ef4444;
+            --blue: #375bd2;
+            --blue-dim: #1a2d6e;
+            --font: 'Geist Mono', 'Courier New', Courier, monospace;
+            /* Nav bar is 52px tall — leave that room for slides */
+            --nav-h: 52px;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* ─── Deck Container ──────────────────────────────── */
+        #deck {
+            position: relative;
+            width: 100vw;
+            height: calc(100vh - var(--nav-h));
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            padding: 48px 64px 24px;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* ─── Shared Header bar ───────────────────────────── */
+        .slide-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--white);
+            padding-bottom: 16px;
+        }
+
+        .slide-num {
+            font-size: 11px;
+            color: var(--green);
+            letter-spacing: 0.2em;
+            min-width: 80px;
+        }
+
+        .slide-label {
+            font-size: 11px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        .slide-label span {
+            color: var(--green);
+        }
+
+        /* ─── Typography ──────────────────────────────────── */
+        h1 {
+            font-size: clamp(40px, 6vw, 88px);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(28px, 4vw, 56px);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.01em;
+        }
+
+        h3 {
+            font-size: clamp(14px, 1.8vw, 22px);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+
+        p,
+        li {
+            font-size: clamp(13px, 1.4vw, 18px);
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li::before {
+            content: '> ';
+            color: var(--green);
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: 1px solid var(--green);
+            color: var(--green);
+            padding: 4px 10px;
+            margin-bottom: 20px;
+        }
+
+        .accent-green {
+            color: var(--green);
+        }
+
+        .accent-red {
+            color: var(--red);
+        }
+
+        /* ─── Grid helpers ────────────────────────────────── */
+        .cols-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            flex: 1;
+        }
+
+        .cols-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 32px;
+            flex: 1;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            border: 1px solid #333;
+            padding: 24px;
+            flex: 1;
+        }
+
+        .card.green {
+            border-color: var(--green);
+        }
+
+        .card.red {
+            border-color: var(--red);
+        }
+
+        .card.blue {
+            border-color: var(--blue);
+        }
+
+        /* ─── Slide 1 — Intro ─────────────────────────────── */
+        #s1 {
+            justify-content: space-between;
+        }
+
+        #s1 .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #s1 .sub {
+            font-size: clamp(13px, 1.5vw, 20px);
+            font-weight: 300;
+            color: #aaa;
+            margin-top: 20px;
+            max-width: 760px;
+            line-height: 1.6;
+        }
+
+        #s1 .footer-row {
+            display: flex;
+            gap: 40px;
+            border-top: 1px solid #333;
+            padding-top: 16px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        #s1 .footer-row span {
+            color: var(--green);
+        }
+
+        /* ─── Slide 9 — Demo ──────────────────────────────── */
+        #s9 {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px solid var(--green);
+            margin: 32px;
+        }
+
+        #s9 .blink {
+            display: inline-block;
+            width: 4px;
+            height: 1em;
+            background: var(--green);
+            margin-left: 8px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* ─── Slide 10 — Thank You ─────────────────────────── */
+        #s10 {
+            justify-content: space-between;
+        }
+
+        #s10 .center-block {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        #s10 .contact-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        #s10 .contact-item {
+            border: 1px solid #333;
+            padding: 20px;
+        }
+
+        #s10 .contact-label {
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        #s10 .contact-value {
+            font-size: clamp(13px, 1.3vw, 17px);
+            color: var(--green);
+        }
+
+        /* ─── Workflow ────────────────────────────────────── */
+        .flow {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            flex: 1;
+        }
+
+        .flow-step {
+            flex: 1;
+            border: 1px solid #333;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .flow-step+.flow-step::before {
+            content: '→';
+            position: absolute;
+            left: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--green);
+            font-size: 20px;
+            z-index: 1;
+        }
+
+        .flow-num {
+            font-size: 40px;
+            font-weight: 900;
+            color: #1a1a1a;
+        }
+
+        .flow-title {
+            font-size: clamp(11px, 1.1vw, 15px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--green);
+        }
+
+        .flow-desc {
+            font-size: clamp(11px, 1vw, 13px);
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        /* ─── Tech Stack pills ───────────────────────────── */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            flex: 1;
+            align-content: start;
+        }
+
+        .tech-item {
+            border: 1px solid #333;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tech-item.highlight {
+            border-color: var(--green);
+        }
+
+        .tech-name {
+            font-size: clamp(13px, 1.3vw, 18px);
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .tech-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* ─── Chainlink slide ────────────────────────────── */
+        .chainlink-feature {
+            border-left: 3px solid var(--green);
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chainlink-feature .cf-title {
+            font-size: clamp(13px, 1.3vw, 18px);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .chainlink-feature .cf-desc {
+            font-size: clamp(12px, 1.1vw, 15px);
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        /* ─── Navigation ─────────────────────────────────── */
+        #nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 64px;
+            border-top: 1px solid #1a1a1a;
+            background: var(--black);
+            z-index: 100;
+        }
+
+        #nav-progress {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 20px;
+            height: 3px;
+            background: #222;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dot.active {
+            background: var(--green);
+        }
+
+        .dot:hover {
+            background: #555;
+        }
+
+        #nav-btns {
+            display: flex;
+            gap: 16px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid #333;
+            color: var(--white);
+            font-family: var(--font);
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        #nav-slide-count {
+            font-size: 12px;
+            color: #444;
+            letter-spacing: 0.1em;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           BRUTALIST ENTRY ANIMATIONS
+        ═══════════════════════════════════════════════════ */
+
+        /* ── Base state: everything starts hidden ───────── */
+        [data-anim] {
+            opacity: 0;
+        }
+
+        [data-anim].revealed {
+            opacity: 1;
+        }
+
+        /* ── 1. BLOCK WIPE (heading h1 / h2)
+              A solid green bar sweeps right → left, uncovering text */
+        @keyframes block-wipe-in {
+            0% {
+                clip-path: inset(0 100% 0 0);
+                opacity: 1;
+            }
+
+            100% {
+                clip-path: inset(0 0% 0 0);
+                opacity: 1;
+            }
+        }
+
+        [data-anim="block-wipe"].revealed {
+            animation: block-wipe-in 0.18s steps(12, end) forwards;
+        }
+
+        /* ── 2. GLITCH-IN (slide-header / tag labels)
+              Rapid horizontal jitter then locks into place */
+        @keyframes glitch-in {
+            0% {
+                transform: translateX(-8px);
+                opacity: 0;
+                filter: brightness(4);
+            }
+
+            20% {
+                transform: translateX(6px);
+                opacity: 1;
+                filter: brightness(2);
+            }
+
+            40% {
+                transform: translateX(-4px);
+                opacity: 1;
+                filter: brightness(3);
+            }
+
+            60% {
+                transform: translateX(2px);
+                opacity: 1;
+                filter: brightness(1.5);
+            }
+
+            80% {
+                transform: translateX(-1px);
+                opacity: 1;
+                filter: brightness(1.2);
+            }
+
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+                filter: brightness(1);
+            }
+        }
+
+        [data-anim="glitch"].revealed {
+            animation: glitch-in 0.22s steps(5, end) forwards;
+        }
+
+        /* ── 3. STEP-SLIDE-LEFT (cards / col children) */
+        @keyframes step-slide-left {
+            0% {
+                transform: translateX(-40px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        [data-anim="slide-left"].revealed {
+            animation: step-slide-left 0.2s steps(8, end) forwards;
+        }
+
+        /* ── 4. STEP-SLIDE-BOTTOM (list items / descriptions) */
+        @keyframes step-slide-bottom {
+            0% {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        [data-anim="slide-bottom"].revealed {
+            animation: step-slide-bottom 0.15s steps(6, end) forwards;
+        }
+
+        /* ── 5. STAMP (flow-steps / tech-items)
+              Scale punch down from 120% */
+        @keyframes stamp-in {
+            0% {
+                transform: scale(1.15);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(0.97);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        [data-anim="stamp"].revealed {
+            animation: stamp-in 0.18s steps(6, end) forwards;
+        }
+
+        /* ── 6. SCANLINE (full-slide overlay flash on entry) */
+        @keyframes scanline-flash {
+            0% {
+                opacity: 0.25;
+            }
+
+            50% {
+                opacity: 0.08;
+            }
+
+            100% {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        .slide-scanline {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(34, 197, 94, 0.04) 3px,
+                    rgba(34, 197, 94, 0.04) 4px);
+            pointer-events: none;
+            z-index: 50;
+            animation: scanline-flash 0.4s steps(8, end) forwards;
+        }
+
+        /* ── 7. SLIDE-RIGHT (right-col items) */
+        @keyframes step-slide-right {
+            0% {
+                transform: translateX(40px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        [data-anim="slide-right"].revealed {
+            animation: step-slide-right 0.2s steps(8, end) forwards;
+        }
+
+        /* blink cursor — keep original */
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes whale-blink-anim {
+
+            0%,
+            100% {
+                border-color: rgba(239, 68, 68, 1);
+                opacity: 1;
+            }
+
+            50% {
+                border-color: rgba(239, 68, 68, 0);
+                opacity: 0;
+            }
+        }
+
+        .whale-blink {
+            animation: whale-blink-anim 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="deck">
+
+        <!-- ─── 01 INTRO ──────────────────────────────────────── -->
+        <section class="slide active" id="s1">
+            <div class="slide-header">
+                <span class="slide-num">01 / 11</span>
+                <span class="slide-label">[ <span>INTRO</span> ]</span>
+            </div>
+            <div class="hero">
+                <div class="tag">Hackathon Demo // 2026</div>
+                <h1>SWARM<br /><span class="accent-green">ORACLE</span><br />PROTOCOL</h1>
+                <p class="sub">
+                    Automated, unbiased UMA voting via a globally diverse AI swarm —<br />
+                    secured end-to-end by Chainlink infrastructure.
+                </p>
+            </div>
+            <div class="footer-row"
+                style="flex-direction:column; gap:8px; border-top:1px solid #1a1a1a; padding-top:16px;">
+                <div style="font-size:13px; color:#666; letter-spacing:0.08em;">SUBMITTED BY <span
+                        style="color:var(--white); font-weight:700;">Kerem Eskici</span></div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:11px; color:#444; letter-spacing:0.12em;">COMPETING AT</span>
+                    <span style="font-size:15px; font-weight:900; letter-spacing:0.04em; color:var(--blue);">CHAINLINK
+                        CONVERGENCE</span>
+                    <span style="font-size:11px; color:#444; letter-spacing:0.12em;">HACKATHON 2026</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 02 PROBLEM ───────────────────────────────────── -->
+        <section class="slide" id="s2">
+            <div class="slide-header">
+                <span class="slide-num">02 / 11</span>
+                <span class="slide-label">[ <span>THE PROBLEM</span> ]</span>
+            </div>
+            <h2>UMA's Oracle Is<br /><span class="accent-red">Riggable By Design.</span></h2>
+            <div class="cols-2" style="margin-top:28px;">
+                <div class="col" style="gap:16px;">
+                    <div class="card red">
+                        <h3 style="color:var(--red);">Core Flaw — Conflict of Interest</h3>
+                        <ul>
+                            <li>UMA token holders act as final judges in market disputes</li>
+                            <li style="color:var(--red);">Whales can simultaneously hold large bets <em>and</em> control
+                                the vote outcome</li>
+                            <li>If rig-profit &gt; 0.05% slashing penalty → whale votes false</li>
+                            <li>Most retail holders never vote — economically irrational</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col" style="gap:16px;">
+                    <div class="card red">
+                        <h3 style="color:var(--red);">Side Problem — Gas Barrier</h3>
+                        <ul>
+                            <li>Gas spikes make voting uneconomic for small holders</li>
+                            <li>Participation collapses further, amplifying whale dominance</li>
+                            <li style="color:var(--red);">Compounds bias: fewer voters = cheaper to rig</li>
+                        </ul>
+                    </div>
+                    <div class="card red whale-blink" style="flex:0; padding:16px;">
+                        <p style="color:var(--red); font-size:13px; letter-spacing:0.04em; line-height:1.6;">
+                            ⚠ WHALE HOLDS BET → WHALE CONTROLS VOTE → MARKET RESOLVES FALSE → USERS LOSE FUNDS
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 03 PAST EXAMPLES ─────────────────────────────── -->
+        <section class="slide" id="s3">
+            <div class="slide-header">
+                <span class="slide-num">03 / 11</span>
+                <span class="slide-label">[ <span>DOCUMENTED INCIDENTS</span> ]</span>
+            </div>
+            <h2>Real Money.<br /><span class="accent-red">Wrong Outcomes.</span></h2>
+            <div class="cols-3" style="margin-top:24px;">
+                <div class="card red">
+                    <h3 style="color:var(--red); font-size: 20px;">$7M — Ukraine Deal</h3>
+                    <p style="margin-bottom:12px; font-size:14px; color:#aaa;">Mar 2025 · Polymarket / UMA</p>
+                    <ul>
+                        <li style="font-size:16px;">Market: "Will Ukraine sign rare-earth deal with Trump before April?"
+                        </li>
+                        <li style="font-size:16px;">Reality: No deal reached. Polymarket said resolve "No"</li>
+                        <li style="font-size:16px; color:var(--red);">54.6% of UMA weight ignored reality → resolved
+                            "Yes"</li>
+                        <li style="font-size:16px; color:var(--red);">$7M in refunds denied — smart contract is final
+                        </li>
+                    </ul>
+                </div>
+                <div class="card red">
+                    <h3 style="color:var(--red); font-size: 20px;">$160M — Zelenskyy Suit</h3>
+                    <p style="margin-bottom:12px; font-size:14px; color:#aaa;">May &amp; Jul 2025 · Polymarket / UMA</p>
+                    <ul>
+                        <li style="font-size:16px;">Market: "Will Zelenskyy wear a suit before July?"</li>
+                        <li style="font-size:16px;">NATO summit — blazer, shirt, slacks. Global media: it was a suit
+                        </li>
+                        <li style="font-size:16px; color:var(--red);">UMA voters ruled: no tie + trainers = not a suit
+                        </li>
+                        <li style="font-size:16px; color:var(--red);">"Yes" bettors burned despite media consensus</li>
+                    </ul>
+                </div>
+                <div class="card red">
+                    <h3 style="color:var(--red); font-size: 20px;">$11M — Venezuela "Invasion"</h3>
+                    <p style="margin-bottom:12px; font-size:14px; color:#aaa;">Jan 2026 · Polymarket / UMA</p>
+                    <ul>
+                        <li style="font-size:16px;">Market: "Will the US invade Venezuela?"</li>
+                        <li style="font-size:16px;">US special forces entered Caracas, captured Maduro</li>
+                        <li style="font-size:16px; color:var(--red);">UMA: "capture mission" ≠ "invasion" → resolved
+                            "No"</li>
+                        <li style="font-size:16px; color:var(--red);">~$11M withheld; insider trading reported before
+                            raid</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 04 SOLUTION ──────────────────────────────────── -->
+        <section class="slide" id="s4">
+            <div class="slide-header">
+                <span class="slide-num">04 / 11</span>
+                <span class="slide-label">[ <span>OUR SOLUTION</span> ]</span>
+            </div>
+            <h2><span class="accent-green">Consolidate.</span><br />Automate. Verify. Decentralise.</h2>
+            <div class="cols-3" style="margin-top:32px;">
+                <div class="card green">
+                    <h3>Vote Consolidation</h3>
+                    <ul>
+                        <li style="font-size:16px;">All delegated UMA votes aggregated into a single on-chain
+                            transaction</li>
+                        <li style="font-size:16px;">Fraction of original gas cost</li>
+                        <li style="font-size:16px; color:var(--green);">Every staker's voice counts regardless of gas
+                            price</li>
+                    </ul>
+                </div>
+                <div class="card green">
+                    <h3>AI Swarm + News Context</h3>
+                    <ul>
+                        <li style="font-size:16px;">Deterministic agents analyse market question</li>
+                        <li style="font-size:16px;">Chainlink Standard HTTP fetches live news from Reuters, CNN, BBC
+                            before each vote</li>
+                        <li style="font-size:16px; color:var(--green);">Agents are grounded in real-world facts, not
+                            guessing</li>
+                    </ul>
+                </div>
+                <div class="card green">
+                    <h3>Global Model Mix</h3>
+                    <ul>
+                        <li style="font-size:16px;">Models from USA &amp; China (GPT-4o, Claude, Gemini, DeepSeek)</li>
+                        <li style="font-size:16px;">Geographic &amp; ideological diversity → political unbiasedness</li>
+                        <li style="font-size:16px; color:var(--green);">No single provider can skew results</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 05 BUSINESS MODEL ─────────────────────────────── -->
+        <section class="slide" id="s5">
+            <div class="slide-header">
+                <span class="slide-num">05 / 11</span>
+                <span class="slide-label">[ <span>BUSINESS MODEL</span> ]</span>
+            </div>
+            <h2>Passive Yield.<br /><span class="accent-green">Active Protocol.</span></h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-top:32px; flex:1;">
+                <div class="card" style="display:flex; flex-direction:column; gap:12px;">
+                    <h3>How It Works</h3>
+                    <ul>
+                        <li>Users delegate UMA tokens to the protocol</li>
+                        <li>Protocol votes on <strong style="color:var(--green);">every</strong> eligible market, every
+                            round</li>
+                        <li>UMA staking yield accumulates in smart contract</li>
+                        <li>Payout distributed automatically — no micromanagement</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Why Delegate?</h3>
+                    <ul>
+                        <li>Zero active participation required</li>
+                        <li>Continuous yield — even when gas is high</li>
+                        <li>Withdraw anytime via smart contract</li>
+                        <li style="color:var(--green);">Better returns than voting solo</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card green"
+                style="margin-top:24px; flex:0; display:flex; justify-content:center; align-items:center; gap:80px; padding:28px 40px;">
+                <div style="text-align:center;">
+                    <div style="font-size:64px; font-weight:900; color:var(--green); line-height:1;">90%</div>
+                    <div style="font-size:13px; color:#aaa; margin-top:4px; letter-spacing:0.06em;">RETURNED TO STAKERS
+                    </div>
+                </div>
+                <div style="width:1px; height:60px; background:#22c55e40;"></div>
+                <div style="text-align:center;">
+                    <div style="font-size:64px; font-weight:900; color:var(--red); line-height:1;">10%</div>
+                    <div style="font-size:13px; color:#aaa; margin-top:4px; letter-spacing:0.06em;">PROTOCOL TREASURY
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 06 TECH STACK ─────────────────────────────────── -->
+        <section class="slide" id="s6">
+            <div class="slide-header">
+                <span class="slide-num">06 / 11</span>
+                <span class="slide-label">[ <span>TECH STACK</span> ]</span>
+            </div>
+            <h2>Built On<br /><span class="accent-green">Proven Rails.</span></h2>
+            <div class="tech-grid" style="margin-top:32px;">
+                <div class="tech-item highlight" style="padding:28px 24px;">
+                    <div class="tech-name">Chainlink CRE</div>
+                    <div class="tech-desc">Confidential &amp; standard HTTP — verifiable AI connections, tamper-proof
+                        news fetching</div>
+                </div>
+                <div class="tech-item highlight" style="padding:28px 24px;">
+                    <div class="tech-name">UMA Protocol</div>
+                    <div class="tech-desc">Optimistic oracle — staking, voting, dispute resolution on-chain</div>
+                </div>
+                <div class="tech-item highlight" style="padding:28px 24px;">
+                    <div class="tech-name">AI Swarm</div>
+                    <div class="tech-desc">GPT-4o · Claude 3.5 · Gemini 2.5 · DeepSeek — deterministic consensus with
+                        live news grounding</div>
+                </div>
+                <div class="tech-item" style="padding:28px 24px;">
+                    <div class="tech-name">Solidity / Foundry</div>
+                    <div class="tech-desc">SOPVault.sol (staking) + OracleRegistry.sol (CRE bridge)</div>
+                </div>
+                <div class="tech-item" style="padding:28px 24px;">
+                    <div class="tech-name">Next.js / wagmi</div>
+                    <div class="tech-desc">Frontend staking hub, real-time SSE consensus feed, wallet integration</div>
+                </div>
+                <div class="tech-item" style="padding:28px 24px;">
+                    <div class="tech-name">Node.js / TypeScript</div>
+                    <div class="tech-desc">Polymarket data ingestion, swarm orchestration, on-chain broadcast</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 07 CHAINLINK DEEP DIVE ───────────────────────── -->
+        <section class="slide" id="s7cl" style="background: #05102e;">
+            <div class="slide-header" style="border-bottom-color: var(--blue);">
+                <span class="slide-num" style="color: var(--blue);">07 / 11</span>
+                <span class="slide-label">[ <span style="color: var(--blue);">CHAINLINK COMPONENTS</span> ]</span>
+            </div>
+            <h2>Chainlink.<br /><span style="color: var(--blue);">Every Layer. Every Guarantee.</span></h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:24px; flex:1;">
+
+                <div class="card blue"
+                    style="border-color:var(--blue); display:flex; flex-direction:column; gap:10px; padding:20px;">
+                    <div style="font-size:18px; font-weight:900; color:#fff; letter-spacing:-0.01em;">Confidential HTTP
+                        (CRE)</div>
+                    <div
+                        style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--blue); border-bottom:1px solid var(--blue-dim); padding-bottom:8px;">
+                        01 — Tamper-Proof AI Calls</div>
+                    <div style="font-size:12px; color:#8899cc; line-height:1.6;">Chainlink CRE executes HTTP requests to
+                        AI provider APIs inside a Trusted Execution Environment (TEE). The request payload, headers, and
+                        response are cryptographically attested — no man-in-the-middle attack is possible, period.</div>
+                    <div style="margin-top:auto; font-size:11px; color:var(--blue);">⬡ BENEFIT — AI responses are
+                        provably unmodified before hitting on-chain logic</div>
+                </div>
+
+                <div class="card blue"
+                    style="border-color:var(--blue); display:flex; flex-direction:column; gap:10px; padding:20px;">
+                    <div style="font-size:18px; font-weight:900; color:#fff; letter-spacing:-0.01em;">Standard HTTP —
+                        News Fetching</div>
+                    <div
+                        style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--blue); border-bottom:1px solid var(--blue-dim); padding-bottom:8px;">
+                        02 — Real-World Fact Grounding</div>
+                    <div style="font-size:12px; color:#8899cc; line-height:1.6;">Before voting, the CRE fetches live
+                        articles from verified outlets — <strong style="color:#fff;">Reuters, CNN, BBC</strong> — via
+                        Chainlink Standard HTTP Jobs (<code
+                            style="color:var(--green); font-size:11px;">news_fetcher.ts</code>). HTML is stripped,
+                        truncated to 8k chars, and fed as context to every AI agent in the swarm.</div>
+                    <div style="margin-top:auto; font-size:11px; color:var(--blue);">⬡ BENEFIT — Agents vote on
+                        verifiable facts, not hallucinations</div>
+                </div>
+
+                <div class="card blue"
+                    style="border-color:var(--blue); display:flex; flex-direction:column; gap:10px; padding:20px;">
+                    <div style="font-size:18px; font-weight:900; color:#fff; letter-spacing:-0.01em;">Chainlink
+                        Automation</div>
+                    <div
+                        style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--blue); border-bottom:1px solid var(--blue-dim); padding-bottom:8px;">
+                        03 — Trigger-Based Market Detection</div>
+                    <div style="font-size:12px; color:#8899cc; line-height:1.6;">Chainlink Automation monitors the UMA
+                        network for new market creation events. The moment a votable market appears, our pipeline is
+                        triggered automatically — no manual cron job, no centralised scheduler, no single point of
+                        failure.</div>
+                    <div style="margin-top:auto; font-size:11px; color:var(--blue);">⬡ BENEFIT — Zero missed votes;
+                        every market is caught as soon as it opens</div>
+                </div>
+
+                <div class="card blue"
+                    style="border-color:var(--blue); display:flex; flex-direction:column; gap:10px; padding:20px;">
+                    <div style="font-size:18px; font-weight:900; color:#fff; letter-spacing:-0.01em;">OracleRegistry.sol
+                    </div>
+                    <div
+                        style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--blue); border-bottom:1px solid var(--blue-dim); padding-bottom:8px;">
+                        04 — Access-Controlled On-Chain Write</div>
+                    <div style="font-size:12px; color:#8899cc; line-height:1.6;">Only authenticated Chainlink nodes are
+                        whitelisted callers on OracleRegistry.sol. The consensus result written on-chain cannot be
+                        submitted by any other party — no front-running, no spoofing, no governance attack via fake
+                        oracle data.</div>
+                    <div style="margin-top:auto; font-size:11px; color:var(--blue);">⬡ BENEFIT — Smart contract receives
+                        only cryptographically verified consensus answers</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ─── 08 WORKFLOW ───────────────────────────────────── -->
+        <section class="slide" id="s7">
+            <div class="slide-header">
+                <span class="slide-num">08 / 11</span>
+                <span class="slide-label">[ <span>WORKFLOW</span> ]</span>
+            </div>
+            <h2>End-to-End<br /><span class="accent-green">Flow.</span></h2>
+            <div class="flow" style="margin-top:32px;">
+                <div class="flow-step">
+                    <div class="flow-num">01</div>
+                    <div class="flow-title">Market Created</div>
+                    <div class="flow-desc">UMA dispute or prediction market goes live on-chain. Protocol detects it
+                        automatically.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">02</div>
+                    <div class="flow-title">AI Swarm Queries</div>
+                    <div class="flow-desc">4 AI models (USA + China) independently analyse the market question.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">03</div>
+                    <div class="flow-title">Chainlink Attests</div>
+                    <div class="flow-desc">Confidential HTTP verifies each AI connection and attests the response
+                        integrity.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">04</div>
+                    <div class="flow-title">Swarm Consensus</div>
+                    <div class="flow-desc">Majority vote across all model responses produces a single deterministic
+                        answer.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">05</div>
+                    <div class="flow-title">UMA Vote Cast</div>
+                    <div class="flow-desc">One consolidated on-chain transaction submitted. All delegators represented.
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">06</div>
+                    <div class="flow-title">Yield Distributed</div>
+                    <div class="flow-desc">90% UMA rewards split to stakers via smart contract. Protocol retains 10%.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 09 SOURCE WEIGHT ALGORITHM ─────────────────── -->
+        <section class="slide" id="s8">
+            <div class="slide-header">
+                <span class="slide-num">09 / 11</span>
+                <span class="slide-label">[ <span>SOURCE WEIGHT ALGORITHM</span> ]</span>
+            </div>
+            <h2>Not All Sources<br /><span class="accent-green">Are Equal.</span></h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px; flex:1;">
+
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div class="card" style="border-color:#333; flex:0;">
+                        <h3>How Weights Work</h3>
+                        <p style="font-size:13px; color:#aaa; line-height:1.7;">Every news source in the pool carries a
+                            <strong style="color:var(--green);">credibility weight</strong> derived from its historical
+                            accuracy on similar market types. The AI swarm's consensus vote is weighted — not just
+                            counted — by source quality.
+                        </p>
+                    </div>
+                    <div class="card green" style="flex:0;">
+                        <h3>Weight by Market Type</h3>
+                        <ul>
+                            <li style="font-size:13px;"><strong style="color:var(--white);">Political &amp;
+                                    geopolitical</strong> — Reuters, AP, BBC, CNN, local gov feeds, Telegram channels
+                            </li>
+                            <li style="font-size:13px;"><strong style="color:var(--white);">Weather</strong> —
+                                AccuWeather, Weather24, NOAA, Weather Underground</li>
+                            <li style="font-size:13px;"><strong style="color:var(--white);">Financial</strong> —
+                                Bloomberg, FT, WSJ, on-chain price feeds</li>
+                            <li style="font-size:13px;"><strong style="color:var(--white);">Sports</strong> — Official
+                                league APIs, ESPN, BBC Sport</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:0;">
+                        <div class="card green" style="padding:16px; flex:0;">
+                            <div style="font-size:10px; letter-spacing:0.2em; color:var(--green); margin-bottom:6px;">
+                                HIGH WEIGHT</div>
+                            <ul>
+                                <li style="font-size:12px;">Reuters</li>
+                                <li style="font-size:12px;">BBC / CNN</li>
+                                <li style="font-size:12px;">AP News</li>
+                                <li style="font-size:12px;">AccuWeather</li>
+                                <li style="font-size:12px;">Official gov feeds</li>
+                            </ul>
+                        </div>
+                        <div class="card red" style="padding:16px; flex:0;">
+                            <div style="font-size:10px; letter-spacing:0.2em; color:var(--red); margin-bottom:6px;">LOW
+                                WEIGHT</div>
+                            <ul>
+                                <li style="font-size:12px; color:var(--red);">Reddit</li>
+                                <li style="font-size:12px; color:var(--red);">4chan / anonymous boards</li>
+                                <li style="font-size:12px; color:var(--red);">Unverified Telegram</li>
+                                <li style="font-size:12px; color:var(--red);">Personal blogs</li>
+                                <li style="font-size:12px; color:var(--red);">Social media posts</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card red" style="flex:0; padding:16px;">
+                        <p style="font-size:13px; color:var(--red); line-height:1.6; letter-spacing:0.03em;">⚠
+                            LOW-WEIGHT SOURCE INCLUDED BUT CANNOT SWING CONSENSUS — IT CAN ONLY CORROBORATE A
+                            HIGH-WEIGHT SIGNAL</p>
+                    </div>
+                    <div class="card" style="flex:1; border-color:#333;">
+                        <h3>Why This Matters</h3>
+                        <p style="font-size:13px; color:#aaa; line-height:1.7;">Reddit and 4chan often spread
+                            unconfirmed rumours hours before established outlets. Including them at full weight would
+                            bias the vote. Including them at <strong style="color:var(--green);">minimal weight</strong>
+                            retains early signal while preventing manipulation.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ─── 10 DEMO ───────────────────────────────────────── -->
+        <section class="slide" id="s9">
+            <div class="slide-header" style="position:absolute; top:48px; left:64px; right:64px;">
+                <span class="slide-num">10 / 11</span>
+                <span class="slide-label">[ <span>DEMO</span> ]</span>
+            </div>
+            <div>
+                <div class="tag" style="margin-bottom:32px;">LIVE DEMONSTRATION</div>
+                <h1 style="font-size: clamp(64px, 10vw, 128px);">DEMO<br /><span class="accent-green">TIME<span
+                            class="blink"></span></span></h1>
+            </div>
+        </section>
+
+        <!-- ─── 11 THANK YOU ─────────────────────────────────── -->
+        <section class="slide" id="s10"
+            style="align-items:center; justify-content:center; text-align:center; position:relative; overflow:hidden;">
+            <!-- rainbow aura rings -->
+            <div
+                style="position:absolute; width:600px; height:600px; top:50%; left:50%; transform:translate(-50%,-50%); border-radius:50% !important; background:conic-gradient(from 0deg, #375bd2, #7b61ff, #22c55e, #f59e0b, #ef4444, #ec4899, #375bd2); opacity:0.12; filter:blur(60px); pointer-events:none;">
+            </div>
+            <div
+                style="position:absolute; width:400px; height:400px; top:50%; left:50%; transform:translate(-50%,-50%); border-radius:50% !important; background:conic-gradient(from 90deg, #22c55e, #375bd2, #ef4444, #f59e0b, #22c55e); opacity:0.08; filter:blur(40px); pointer-events:none;">
+            </div>
+            <!-- content -->
+            <div
+                style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:20px;">
+                <div style="font-size:11px; letter-spacing:0.3em; text-transform:uppercase; color:#555;">SUBMITTED TO
+                </div>
+                <div
+                    style="font-size:clamp(18px,2.5vw,30px); font-weight:900; letter-spacing:0.04em; background:linear-gradient(90deg,#375bd2,#7b61ff,#22c55e,#f59e0b,#ef4444,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
+                    CHAINLINK CONVERGENCE HACKATHON 2026</div>
+                <div style="width:120px; height:2px; background:linear-gradient(90deg,#375bd2,#22c55e,#ef4444);"></div>
+                <h1 style="line-height:1; margin:0;">SWARM<br /><span
+                        style="background:linear-gradient(90deg,#22c55e,#375bd2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">ORACLE</span><br />PROTOCOL
+                </h1>
+                <p style="color:#666; font-size:clamp(13px,1.3vw,17px); max-width:560px; line-height:1.7;">Automated,
+                    unbiased UMA voting — powered by a globally diverse AI swarm, grounded in real-world news, and
+                    secured end-to-end by Chainlink.</p>
+                <div style="margin-top:8px; font-size:13px; color:#444;">Built by <span
+                        style="color:var(--white); font-weight:700;">Kerem Eskici</span></div>
+            </div>
+        </section>
+
+    </div><!-- /#deck -->
+
+    <!-- ─── Navigation Bar ──────────────────────────────── -->
+    <nav id="nav">
+        <div id="nav-progress"></div>
+        <span id="nav-slide-count">01 / 11</span>
+        <div id="nav-btns">
+            <button class="nav-btn" id="btn-prev">← PREV</button>
+            <button class="nav-btn" id="btn-next">NEXT →</button>
+        </div>
+    </nav>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+        let current = 0;
+
+        const progressEl = document.getElementById('nav-progress');
+        const slideCountEl = document.getElementById('nav-slide-count');
+
+        /* ── Build progress dots ─────────────────────────── */
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.addEventListener('click', () => goTo(i));
+            progressEl.appendChild(dot);
+        });
+
+        /* ── Animation engine ────────────────────────────── */
+
+        /**
+         * Determine animation type for an element.
+         * Returns null if element should not be animated.
+         */
+        function animType(el, slideEl) {
+            if (el.classList.contains('slide-scanline')) return null; // skip overlay
+            if (el.classList.contains('whale-blink')) return null; // skip infinite css animations
+            if (el.classList.contains('slide-header')) return 'glitch';
+            if (el.tagName === 'H1' || el.tagName === 'H2') return 'block-wipe';
+            if (el.classList.contains('tag')) return 'block-wipe';
+            if (el.classList.contains('flow-step')) return 'stamp';
+            if (el.classList.contains('tech-item')) return 'stamp';
+            if (el.tagName === 'LI') return 'slide-bottom';
+            if (el.classList.contains('card') ||
+                el.classList.contains('chainlink-feature') ||
+                el.classList.contains('col')) {
+                // Right-column elements slide from right
+                const parent = el.closest('.cols-2, .cols-3');
+                if (parent) {
+                    const cols = Array.from(parent.children);
+                    const colIdx = cols.indexOf(el.parentElement) !== -1
+                        ? cols.indexOf(el.parentElement)
+                        : cols.indexOf(el);
+                    return colIdx >= Math.floor(cols.length / 2) ? 'slide-right' : 'slide-left';
+                }
+                return 'slide-left';
+            }
+            if (el.classList.contains('contact-item')) return 'stamp';
+            if (el.classList.contains('footer-row')) return 'slide-bottom';
+            if (el.classList.contains('sub')) return 'slide-bottom';
+            if (el.classList.contains('hero')) return null; // children handle themselves
+            return null;
+        }
+
+        /**
+         * Collect all elements to animate inside a slide,
+         * in a sensible DOM order (breadth-first-ish).
+         */
+        function collectAnimTargets(slideEl) {
+            const selectors = [
+                '.slide-header',
+                'h1', 'h2',
+                '.tag',
+                '.hero > *',          // for slide 1: h1, sub inside hero
+                '.card',
+                '.chainlink-feature',
+                '.tech-item',
+                '.flow-step',
+                '.contact-item',
+                '.footer-row',
+                'li'
+            ];
+            const seen = new Set();
+            const result = [];
+            selectors.forEach(sel => {
+                slideEl.querySelectorAll(sel).forEach(el => {
+                    if (!seen.has(el)) {
+                        seen.add(el);
+                        const type = animType(el, slideEl);
+                        if (type) result.push({ el, type });
+                    }
+                });
+            });
+            return result;
+        }
+
+        /**
+         * Fire animations on the newly active slide.
+         */
+        function animateSlide(slideEl) {
+            // Remove stale anim attributes + classes from previous run
+            slideEl.querySelectorAll('[data-anim]').forEach(el => {
+                el.removeAttribute('data-anim');
+                el.classList.remove('revealed');
+            });
+            // Remove any old scanline
+            slideEl.querySelectorAll('.slide-scanline').forEach(e => e.remove());
+
+            // 1. Scanline flash overlay
+            const scanline = document.createElement('div');
+            scanline.className = 'slide-scanline';
+            slideEl.appendChild(scanline);
+            scanline.addEventListener('animationend', () => scanline.remove());
+
+            // 2. Collect + stagger elements
+            const targets = collectAnimTargets(slideEl);
+            const BASE_DELAY = 60;   // ms before first element
+            const STAGGER_STEP = 65;   // ms between each element
+
+            targets.forEach(({ el, type }, i) => {
+                el.setAttribute('data-anim', type);
+                setTimeout(() => {
+                    el.classList.add('revealed');
+                }, BASE_DELAY + i * STAGGER_STEP);
+            });
+        }
+
+        /* ── Navigation ──────────────────────────────────── */
+        function goTo(idx) {
+            slides[current].classList.remove('active');
+            document.querySelectorAll('.dot')[current].classList.remove('active');
+            current = (idx + total) % total;
+            const nextSlide = slides[current];
+            nextSlide.classList.add('active');
+            document.querySelectorAll('.dot')[current].classList.add('active');
+            slideCountEl.textContent =
+                String(current + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+            // Trigger animations on the new slide
+            animateSlide(nextSlide);
+        }
+
+        document.getElementById('btn-prev').addEventListener('click', () => goTo(current - 1));
+        document.getElementById('btn-next').addEventListener('click', () => goTo(current + 1));
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+        });
+
+        document.getElementById('deck').addEventListener('click', e => {
+            if (!e.target.closest('#nav')) goTo(current + 1);
+        });
+
+        // Animate the first slide on load
+        animateSlide(slides[0]);
+    </script>
+</body>
+
+</html>
