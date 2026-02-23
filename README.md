@@ -36,9 +36,9 @@ flowchart TD
     
     FetchNews --> SwarmContext[Context built: Rules + Live News]
     
-    subgraph Enclave [Chainlink CRE (Trusted Execution Environment)]
-        SwarmContext --> SwarmExec[4. AI Swarm Executes (o3-mini, Claude, Gemini, DeepSeek)]
-        SwarmExec --> Consensus[5. Consensus Engine (>50% Majority)]
+    subgraph Enclave ["Chainlink CRE (Trusted Execution Environment)"]
+        SwarmContext --> SwarmExec["4. AI Swarm Executes (o3-mini, Claude, Gemini, DeepSeek)"]
+        SwarmExec --> Consensus["5. Consensus Engine (>50% Majority)"]
     end
     
     Consensus -->|Verified Result| Sign[6. Chainlink DON Configures Cryptographic Signature]
