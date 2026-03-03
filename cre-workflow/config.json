@@ -5,7 +5,7 @@
     "isTestnet": true,
     "owner": "",
     "openaiModel": "gpt-4o",
-    "anthropicModel": "claude-3-5-sonnet-20241022",
     "googleModel": "gemini-1.5-pro",
-    "deepseekModel": "deepseek-chat"
+    "deepseekModel": "deepseek-chat",
+    "useDynamicSearch": true
 }

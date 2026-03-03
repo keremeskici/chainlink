@@ -42,8 +42,8 @@ interface MarketData {
 // ─── News outlet configuration ──────────────────────────────────────
 const NEWS_OUTLETS = [
     {
-        name: "Reuters",
-        url: "https://www.reuters.com/world/us/early-takeaways-us-presidential-election-2024-11-06/",
+        name: "DW News",
+        url: "https://www.dw.com/en/us-presidential-election-2024/t-65733013",
     },
     {
         name: "CNN",
@@ -290,23 +290,76 @@ async function invokeDeepSeek(
         },
         body,
     });
-    const json = await res.json();
+    const data = await res.json();
     const reasoning =
-        json?.choices?.[0]?.message?.reasoning_content || "";
-    const content = json?.choices?.[0]?.message?.content || "";
-    const combined = reasoning
-        ? `${reasoning}\n\n${content}`
-        : content;
-    return parseJSON(combined);
+        data?.choices?.[0]?.message?.reasoning_content || "";
+    const content = data?.choices?.[0]?.message?.content || "";
+
+    // Aggressively clean content by stripping markdown backticks
+    const cleanedContent = content.replace(/```(?:json)?/gi, "").trim();
+
+    let parsed;
+    try {
+        parsed = parseJSON(cleanedContent);
+    } catch (err: any) {
+        // Fallback for deeply mangled DeepSeek outputs
+        parsed = {
+            reasoning: "Failed to parse JSON",
+            selected_option: "",
+        };
+    }
+
+    if (reasoning) {
+        parsed.reasoning = reasoning + "\n\n" + parsed.reasoning;
+    }
+    return parsed;
 }
 
 function parseJSON(raw: string): {
     reasoning: string;
     selected_option: string;
 } {
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error("Could not parse JSON from LLM response");
-    const parsed = JSON.parse(match[0]);
+    // 1. Try to extract strictly inside markdown ```json ... ```
+    const markdownMatch = raw.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/i);
+    let extractedStr = raw;
+    if (markdownMatch) {
+        extractedStr = markdownMatch[1];
+    }
+
+    // 2. Scan backwards from the last '}' to find a matching '{'
+    let parsed: any = null;
+    let foundParse = false;
+
+    // First try a standard extraction
+    const match = extractedStr.match(/\{[\s\S]*\}/);
+    if (match) {
+        try {
+            parsed = JSON.parse(match[0]);
+            foundParse = true;
+        } catch { }
+    }
+
+    // If that fails, try inner ranges backwards
+    if (!foundParse) {
+        const lastBraceIndex = extractedStr.lastIndexOf("}");
+        if (lastBraceIndex !== -1) {
+            for (let i = lastBraceIndex - 1; i >= 0; i--) {
+                if (extractedStr[i] === "{") {
+                    const substring = extractedStr.substring(i, lastBraceIndex + 1);
+                    try {
+                        parsed = JSON.parse(substring);
+                        foundParse = true;
+                        break;
+                    } catch { }
+                }
+            }
+        }
+    }
+
+    if (!foundParse || !parsed) {
+        throw new Error("Could not parse JSON from LLM response");
+    }
+
     return {
         reasoning: parsed.reasoning || "",
         selected_option: parsed.selected_option || "",

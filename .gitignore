@@ -113,3 +113,5 @@ coverage/
 *.pid
 *.seed
 *.pid.lock
+slides.html
+.gitignore

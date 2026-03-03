@@ -29,14 +29,17 @@ export interface ConsensusResult {
 /**
  * Calculates consensus using mode (most frequent selected_option).
  * Requires >50% majority to resolve.
+ * Enforces a strict quorum: at least 3 successful responses required.
  */
 export function calculateConsensus(results: SwarmResult[]): ConsensusResult {
     const successfulResults = results.filter((r) => r.success && r.data);
 
-    if (successfulResults.length === 0) {
-        throw new Error(
-            "Consensus failed: No successful LLM responses received."
-        );
+    if (successfulResults.length < 3) {
+        return {
+            resolved: false,
+            voteCounts: {},
+            totalVotes: successfulResults.length
+        };
     }
 
     const voteCounts: Record<string, number> = {};

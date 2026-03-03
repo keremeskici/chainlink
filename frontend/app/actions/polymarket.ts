@@ -39,6 +39,7 @@ export async function fetchHistoricalMarkets(): Promise<Market[]> {
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',
+                    'Origin': 'https://polymarket.com',
                 },
                 cache: 'no-store',
             }

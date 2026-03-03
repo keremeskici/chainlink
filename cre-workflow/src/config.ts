@@ -16,6 +16,9 @@ export const configSchema = z.object({
     isTestnet: z.boolean(),
     owner: z.string(),
 
+    // Dynamic Search configuration
+    useDynamicSearch: z.boolean(),
+
     // AI model identifiers — leave empty string to disable a provider
     openaiModel: z.string(),
     anthropicModel: z.string(),

@@ -10,10 +10,10 @@ export default function DelegatePage() {
     const [amount, setAmount] = useState('');
     const [mode, setMode] = useState<'stake' | 'unstake'>('stake');
     const [isPending, setIsPending] = useState(false);
-    const [toast, setToast] = useState<string | null>(null);
+    const [toast, setToast] = useState<{ msg: string; type: 'error' | 'success' } | null>(null);
 
-    const showError = useCallback((msg: string) => {
-        setToast(msg);
+    const showToast = useCallback((msg: string, type: 'error' | 'success' = 'error') => {
+        setToast({ msg, type });
         setTimeout(() => setToast(null), 4000);
     }, []);
 
@@ -25,7 +25,7 @@ export default function DelegatePage() {
         functionName: 'umaToken',
     });
 
-    const { data: rawTvl } = useReadContract({
+    const { data: rawTvl, refetch: refetchTvl } = useReadContract({
         address: SOP_VAULT_ADDRESS,
         abi: SOP_VAULT_ABI,
         functionName: 'getUmatvl',
@@ -134,9 +134,10 @@ export default function DelegatePage() {
             // Wait for tx to be mined + RPC sync
             await new Promise(r => setTimeout(r, 8000));
             await refetchAllowance();
+            showToast('TRANSACTION SUCCESSFUL', 'success');
         } catch (e: unknown) {
             console.error('Approval failed:', e);
-            showError('TRANSACTION CANCELLED');
+            showToast('TRANSACTION CANCELLED', 'error');
         }
         setIsPending(false);
     };
@@ -156,9 +157,11 @@ export default function DelegatePage() {
             await new Promise(r => setTimeout(r, 5000));
             refetchStakedBalance();
             refetchUmaBalance();
+            refetchTvl();
+            showToast('TRANSACTION SUCCESSFUL', 'success');
         } catch (e: unknown) {
             console.error('Stake failed:', e);
-            showError('TRANSACTION CANCELLED');
+            showToast('TRANSACTION CANCELLED', 'error');
         }
         setIsPending(false);
     };
@@ -178,9 +181,11 @@ export default function DelegatePage() {
             await new Promise(r => setTimeout(r, 5000));
             refetchStakedBalance();
             refetchUmaBalance();
+            refetchTvl();
+            showToast('TRANSACTION SUCCESSFUL', 'success');
         } catch (e: unknown) {
             console.error('Unstake failed:', e);
-            showError('TRANSACTION CANCELLED');
+            showToast('TRANSACTION CANCELLED', 'error');
         }
         setIsPending(false);
     };
@@ -402,10 +407,11 @@ export default function DelegatePage() {
                 </div>
             </div>
 
-            {/* Error Toast */}
+            {/* Toast Notification */}
             {toast && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-8 py-4 bg-red border border-red text-white font-bold uppercase tracking-widest text-sm animate-pulse">
-                    {toast}
+                <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-8 py-4 border font-bold uppercase tracking-widest text-sm animate-pulse ${toast.type === 'success' ? 'bg-green border-green text-black' : 'bg-red border-red text-white'
+                    }`}>
+                    {toast.msg}
                 </div>
             )}
         </div>
