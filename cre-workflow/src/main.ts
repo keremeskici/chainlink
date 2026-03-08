@@ -1,12 +1,12 @@
 /**
  * SwarmOracle Protocol — CRE Workflow Entry Point
  *
- * Event-driven: fires when ResolutionRequested is emitted on OracleRegistry.
+ * Event-driven: fires when UMAVoteCast or a trigger is emitted on SOPVault.
  *
  *   1. Decode polymarketId from the EVM log
  *   2. Fetch that specific event from Polymarket (HTTP Client)
  *   3. Run AI swarm consensus (Confidential HTTP Client)
- *   4. Write verdict on-chain (EVM Client)
+ *   4. Write verdict on-chain via SOPVault.executeUMAVote (EVM Client)
  *
  * Run: cre workflow simulate .
  */
@@ -116,18 +116,18 @@ const onLogTrigger = (runtime: Runtime<Config>, log: EVMLog): string => {
         `Consensus reached: "${consensus.winningOption}" (${consensus.totalVotes} votes: ${JSON.stringify(consensus.voteCounts)})`
     );
 
-    // Step 5: Write verdict on-chain
+    // Step 5: Write verdict on-chain via SOPVault.executeUMAVote
     runtime.log(
-        `Recording verdict on-chain: ${polymarketId} → "${consensus.winningOption}"`
+        `Recording verdict on SOPVault: ${polymarketId} → "${consensus.winningOption}"`
     );
     executeOnChainResolution(runtime, polymarketId, consensus.winningOption!);
-    runtime.log("On-chain transaction confirmed.");
+    runtime.log("On-chain transaction confirmed via SOPVault.");
 
     return `RESOLVED:${consensus.winningOption}`;
 };
 
 // ---------------------------------------------------------------------
-// Workflow initialization — EVM Log Trigger
+// Workflow initialization — EVM Log Trigger on SOPVault
 // ---------------------------------------------------------------------
 const initWorkflow = (config: Config) => {
     const network = getNetwork({
@@ -144,13 +144,13 @@ const initWorkflow = (config: Config) => {
 
     const evmClient = new EVMClient(network.chainSelector.selector);
 
-    // Watch for ResolutionRequested(string,address) on OracleRegistry
+    // Watch for ResolutionRequested(string,address) on SOPVault
     const eventSignature = keccak256(
         toBytes("ResolutionRequested(string,address)")
     );
 
     const logTrigger = evmClient.logTrigger({
-        addresses: [hexToBase64(config.oracleRegistryAddress as `0x${string}`)],
+        addresses: [hexToBase64(config.sopVaultAddress as `0x${string}`)],
         topics: [
             { values: [hexToBase64(eventSignature)] },
         ],

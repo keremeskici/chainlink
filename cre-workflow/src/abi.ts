@@ -1,40 +1,25 @@
 /**
- * OracleRegistry ABI in viem-compatible format.
- * Used by both CRE workflow (encodeFunctionData, decodeEventLog)
- * and for EVM Log Trigger event signature hashing.
+ * SOPVault ABI in viem-compatible format.
+ * Used by the CRE workflow to encode executeUMAVote calls
+ * and decode UMAVoteCast events.
  */
-export const OracleRegistryABI = [
+export const SOPVaultABI = [
     {
         type: "function",
-        name: "requestResolution",
-        inputs: [{ name: "_polymarketId", type: "string" }],
-        outputs: [],
-        stateMutability: "nonpayable",
-    },
-    {
-        type: "function",
-        name: "recordVerdict",
+        name: "executeUMAVote",
         inputs: [
-            { name: "_polymarketId", type: "string" },
-            { name: "_outcome", type: "string" },
+            { name: "polymarketId", type: "string" },
+            { name: "verdict", type: "string" },
         ],
         outputs: [],
         stateMutability: "nonpayable",
     },
     {
         type: "event",
-        name: "ResolutionRequested",
+        name: "UMAVoteCast",
         inputs: [
             { name: "polymarketId", type: "string", indexed: false },
-            { name: "requester", type: "address", indexed: false },
-        ],
-    },
-    {
-        type: "event",
-        name: "VerdictRecorded",
-        inputs: [
-            { name: "polymarketId", type: "string", indexed: true },
-            { name: "outcome", type: "string", indexed: false },
+            { name: "verdict", type: "string", indexed: false },
         ],
     },
 ] as const;

@@ -9,6 +9,7 @@ contract SOPVault is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable umaToken;
+    address public creWorkflowAddress;
 
     mapping(address => uint256) public balances;
     uint256 public totalStaked;
@@ -17,10 +18,21 @@ contract SOPVault is ReentrancyGuard {
 
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
+    event UMAVoteCast(string polymarketId, string verdict);
 
-    constructor(address _umaToken) {
+    modifier onlyCRE() {
+        require(
+            msg.sender == creWorkflowAddress,
+            "Only CRE workflow can call this"
+        );
+        _;
+    }
+
+    constructor(address _umaToken, address _creWorkflowAddress) {
         require(_umaToken != address(0), "Invalid token address");
+        require(_creWorkflowAddress != address(0), "Invalid CRE address");
         umaToken = IERC20(_umaToken);
+        creWorkflowAddress = _creWorkflowAddress;
     }
 
     function stake(uint256 amount) external nonReentrant {
@@ -44,6 +56,14 @@ contract SOPVault is ReentrancyGuard {
         umaToken.safeTransfer(msg.sender, amount);
 
         emit Unstaked(msg.sender, amount);
+    }
+
+    /// @notice CRE-only: execute a UMA vote on behalf of the vault's delegators.
+    function executeUMAVote(
+        string memory polymarketId,
+        string memory verdict
+    ) external onlyCRE {
+        emit UMAVoteCast(polymarketId, verdict);
     }
 
     /// @notice Returns the Total Value Locked (TVL) in the vault

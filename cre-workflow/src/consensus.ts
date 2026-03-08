@@ -3,6 +3,8 @@
  *
  * Vote-counting logic is unchanged. On-chain write uses the CRE SDK:
  *   encodeFunctionData() → runtime.report() → evmClient.writeReport()
+ *
+ * Targets SOPVault.executeUMAVote() directly.
  */
 import {
     EVMClient,
@@ -14,7 +16,7 @@ import {
 import { encodeFunctionData } from "viem";
 import { type Config } from "./config";
 import { type SwarmResult } from "./swarm";
-import { OracleRegistryABI } from "./abi";
+import { SOPVaultABI } from "./abi";
 
 // ---------------------------------------------------------------------
 // Consensus logic (pure vote-counting — no SDK dependency)
@@ -74,16 +76,16 @@ export function calculateConsensus(results: SwarmResult[]): ConsensusResult {
 }
 
 // ---------------------------------------------------------------------
-// On-chain execution via CRE EVM Client
+// On-chain execution via CRE EVM Client — targets SOPVault
 // ---------------------------------------------------------------------
 
 /**
- * Records a verdict on-chain using the CRE EVM Client.
+ * Records a verdict on-chain by calling SOPVault.executeUMAVote().
  *
  * Pipeline: encodeFunctionData() → runtime.report() → evmClient.writeReport()
  *
  * The DON cryptographically signs the report, and the CRE network
- * submits the transaction to the OracleRegistry contract.
+ * submits the transaction to the SOPVault contract.
  */
 export function executeOnChainResolution(
     runtime: Runtime<Config>,
@@ -105,10 +107,10 @@ export function executeOnChainResolution(
         );
     }
 
-    // 2. Encode the contract call
+    // 2. Encode the contract call targeting SOPVault.executeUMAVote
     const callData = encodeFunctionData({
-        abi: OracleRegistryABI,
-        functionName: "recordVerdict",
+        abi: SOPVaultABI,
+        functionName: "executeUMAVote",
         args: [polymarketId, outcome],
     });
 
@@ -117,18 +119,18 @@ export function executeOnChainResolution(
         .report(prepareReportRequest(callData))
         .result();
 
-    // 4. Submit on-chain via the EVM Client
+    // 4. Submit on-chain via the EVM Client — receiver is SOPVault
     const evmClient = new EVMClient(network.chainSelector.selector);
 
     const writeResult = evmClient
         .writeReport(runtime, {
-            receiver: config.oracleRegistryAddress,
+            receiver: config.sopVaultAddress,
             report,
             gasConfig: { gasLimit: "500000" },
         })
         .result();
 
     runtime.log(
-        `On-chain verdict recorded: tx=${bytesToHex(writeResult.txHash || new Uint8Array(32))}`
+        `On-chain verdict recorded on SOPVault: tx=${bytesToHex(writeResult.txHash || new Uint8Array(32))}`
     );
 }

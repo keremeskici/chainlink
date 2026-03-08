@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {OracleRegistry} from "../src/OracleRegistry.sol";
 import {SOPVault} from "../src/SOPVault.sol";
 
 contract DeploySOP is Script {
@@ -18,10 +17,7 @@ contract DeploySOP is Script {
 
         vm.startBroadcast(deployerPrivateKey);
 
-        OracleRegistry registry = new OracleRegistry(creAddress);
-        console.log("OracleRegistry deployed to:", address(registry));
-
-        SOPVault vault = new SOPVault(umaTokenAddress);
+        SOPVault vault = new SOPVault(umaTokenAddress, creAddress);
         console.log("SOPVault deployed to:", address(vault));
 
         vm.stopBroadcast();

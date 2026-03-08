@@ -25,12 +25,11 @@ function loadEnvFile(filePath: string): Record<string, string> {
   return env;
 }
 
-const envLocal = loadEnvFile(path.resolve(__dirname, ".env.local"));
+const envLocal = loadEnvFile(path.resolve(__dirname, "../.env"));
 
 const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_SOP_VAULT: envLocal.NEXT_PUBLIC_SOP_VAULT || "",
-    NEXT_PUBLIC_ORACLE_REGISTRY: envLocal.NEXT_PUBLIC_ORACLE_REGISTRY || "",
     NEXT_PUBLIC_RPC_URL: envLocal.NEXT_PUBLIC_RPC_URL || "",
     NEXT_PUBLIC_CHAIN_ID: envLocal.NEXT_PUBLIC_CHAIN_ID || "",
     OPENAI_MODEL: envLocal.OPENAI_MODEL || "",

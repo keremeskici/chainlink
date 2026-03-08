@@ -18,16 +18,22 @@ contract SOPVaultTest is Test {
     SOPVault public vault;
     MockUMA public uma;
 
+    address public creAddress = address(0xCCCC);
+    address public nonCreAddress = address(0xDDDD);
     address public user1 = address(0x111);
     address public user2 = address(0x222);
 
+    event UMAVoteCast(string polymarketId, string verdict);
+
     function setUp() public {
         uma = new MockUMA();
-        vault = new SOPVault(address(uma));
+        vault = new SOPVault(address(uma), creAddress);
 
         uma.mint(user1, 1000 ether);
         uma.mint(user2, 1000 ether);
     }
+
+    // ── Staking ──────────────────────────────────────────────────────
 
     function test_Stake() public {
         vm.startPrank(user1);
@@ -71,7 +77,26 @@ contract SOPVaultTest is Test {
         vault.stake(100 ether);
         vm.stopPrank();
 
-        assertEq(vault.getUmatvl(), 100 ether);
-        assertEq(vault.getApy(), 500);
+        assertEq(vault.getUMATVL(), 100 ether);
+        assertEq(vault.getAPY(), 500);
+    }
+
+    // ── CRE Integration ──────────────────────────────────────────────
+
+    function test_InitialCREAddress() public view {
+        assertEq(vault.creWorkflowAddress(), creAddress);
+    }
+
+    function test_ExecuteUMAVote_Success() public {
+        vm.prank(creAddress);
+        vm.expectEmit(false, false, false, true);
+        emit UMAVoteCast("poly-123", "Yes");
+        vault.executeUMAVote("poly-123", "Yes");
+    }
+
+    function test_ExecuteUMAVote_RevertIfNonCRE() public {
+        vm.prank(nonCreAddress);
+        vm.expectRevert("Only CRE workflow can call this");
+        vault.executeUMAVote("poly-123", "Yes");
     }
 }

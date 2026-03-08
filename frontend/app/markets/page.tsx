@@ -164,7 +164,7 @@ export default function MarketsPage() {
                         )}
 
                         <CyberText as="p" delay={900} className="font-mono text-gray-400 mb-8 text-sm">
-                            Verdict recorded on UMA Network via OracleRegistry.recordVerdict()
+                            Verdict recorded on UMA Network via SOPVault.executeUMAVote()
                         </CyberText>
 
                         <button

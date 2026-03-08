@@ -11,7 +11,7 @@ import { z } from "zod";
 // ---------------------------------------------------------------------
 export const configSchema = z.object({
     polymarketApiUrl: z.string(),
-    oracleRegistryAddress: z.string(),
+    sopVaultAddress: z.string(),
     chainSelectorName: z.string(),
     isTestnet: z.boolean(),
     owner: z.string(),
